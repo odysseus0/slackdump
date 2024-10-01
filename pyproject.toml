@@ -1,0 +1,19 @@
+[project]
+name = "slackdump"
+version = "0.1.0"
+description = "Extract structured notes from Slack and add to Notion"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "tiktoken",
+    "ipykernel",
+    "pydantic",
+    "notion-client",
+    "openai",
+    "pyyaml",
+    "backoff>=2.2.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
