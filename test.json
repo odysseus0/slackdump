@@ -1,0 +1,16 @@
+{
+  "source": {
+    "type": "collection",
+    "id": "1f6e6757-34a9-46d2-9698-50ca285396dd",
+    "spaceId": "df6156be-4a40-4dc3-9a41-d3def62df57a"
+  },
+  "collectionView": {
+    "id": "6f411326-dd7d-42aa-af11-5e0b6352246c",
+    "spaceId": "df6156be-4a40-4dc3-9a41-d3def62df57a"
+  },
+  "loader": {
+    "reducers": {
+      "collection_group_results": { "type": "results", "limit": 50 }
+    }
+  }
+}

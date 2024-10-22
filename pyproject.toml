@@ -12,8 +12,10 @@ dependencies = [
     "openai",
     "pyyaml",
     "backoff>=2.2.1",
+    "rapidfuzz>=3.10.0",
+    "python-dotenv>=1.0.1",
+    "pytest>=8.3.3",
 ]
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+[project.scripts]
+extract-page-id-mapping = "src.extract_page_id_mapping:main"

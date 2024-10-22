@@ -1,0 +1,88 @@
+> tesa [U06TUB9EW2Y] @ 22/09/2024 09:12:47 Z:
+> tesa [U06TUB9EW2Y] @ 22/09/2024 09:12:47 Z:
+Automata notes:  Deli Gong, Zheng Leong Chua, Oana
+
+<https://www.notion.so/flashbots/Automata-160cb1d513f2465296257f9617cd65de>
+
+Background:
+• They are focused on developing tools and SDK for developers. Initially they aimed to solve MEV and build applications in 2021, but pivoted to focus on TEE platforms. Their first product was an RPC with privacy protection. They developed a TEE block builder which Justin Drake saw and that led to a collaboration with Scroll to build multiprovers. Now they are focused on attestations and helping teams with TEE attestation implementations.
+Edge:
+• Providing attestations with a focus on smart contract identity and proof of identity.
+Target customers:
+• Applications: 1) abstracted wallets, 2) anti-sybil solutions for gaming, and 3) KYC/KYB regulatory attestation.
+Current customers:
+• ZK Sync: Consulted with ZK Sync but ZK Sync then hired an in-house TEE team.
+• Scroll: Co-developed multiprover for Scroll and runs it for them.
+• Worldcoin: Developing attestation solutions for Worldcoin that WC will run.
+• Taiko: Providing attestations.
+• Linea: Multiprover services.
+AVS - TEE Service:
+• Exploring if they can host a TEE layer on Eigenlayer. They are currently running an AVS there for multiproving. The AVS previously ran validators for Secret and Phala. There is minimal state management for operators.
+Roadmap:
+1. Scale Eigenlayer AVS to provide TEE service (multiprovers)
+2. Develop operators for attestation layer, similar to RiskZero. Everyone can generate a proof and this proof can be verified on chain.
+Business Model:
+• Attestation fees embedded in L2 gas fees (licensing model)
+• Hosting and servicing model fees. They take token grants for projects without tokens.
+• Potential new model: TDX block builder running on AVS infrastructure
+FB Collaboration Opportunities:
+• TEE solution for multiprover side (2-3 months timeline)
+• Research and feasibility studies for new ground
+• TDX builder for 2025 network. Automata has no capacity issues and want to do more application proof of concepts.
+• TEE proof on OP stack.
+    ◦ Oana previously proposed a TEE prover to the OP team but they never heard back.
+    ◦ Co-design prover boost for OP stack paired with L2 block builder. FB doesnʻt need to own the prover which can leverage Automataʻs core edge.
+    ◦ Challenges with BASE due to AWS background and preference for Nitro
+
+|   
+|   > dmarz [U05BMHJMRNK] @ 22/09/2024 15:07:27 Z:
+|   Should I just reach out and schedule a call with them to start the op stack tee proof work?
+
+> tesa [U06TUB9EW2Y] @ 22/09/2024 09:27:04 Z:
+> tesa [U06TUB9EW2Y] @ 22/09/2024 09:27:04 Z:
+GSR notes:  Alain Kunz, Jacob, Andrew
+
+<https://www.notion.so/flashbots/9944eb75830a4a0dbf08cbdd41d0ef7f?v=1096b4a0d8768043908d000c1f942073&p=1076b4a0d87680ce911dc2eb2e0c45eb&pm=s>
+
+Overview
+• They recently restructured their trading teams to have a centralized risk management view. They aim to internalize as much risk as possible and are capable with absorbing the majority of flow that they see with no impact.
+• They have a MAS (Singapore) license and are looking at obtaining a UK license. Their trading desk is in London.
+• The company is 200 people.
+DeFi:
+• Their DeFi team is a work in progress and they are rewriting their strategies in Rust. Their primary focus is sourcing and providing liquidity on DeFi platforms. They do not have their own solver and use 3rd party solvers.
+• They are working on upskilling their DeFi team with more improved gas knowledge. They want to become the top player in DeFi (currently lower tier) and sees the fragmentation an edge for them.
+Market Focus:
+• EVM is still their biggest focus but they are also focusing on Solana and smaller markets with less competition.
+Block Building
+• They have a partnership with Titan which came about since Alain is Swedish and one of Titanʻs core members is Swedish.  (<@U03TD87PTMK> needs to join their Swedish mafia). 
+• Their main priority is winning ToB orders.  
+• They are interested in the wallet market share that they can capture and not really focused on block building.
+
+|   
+|   > Tina [U03GRQX5HGR] @ 22/09/2024 09:38:04 Z:
+|   I think it's Alain is not the swedish guy but the former ceo now president of GSR is?
+
+> tesa [U06TUB9EW2Y] @ 22/09/2024 10:54:51 Z:
+> tesa [U06TUB9EW2Y] @ 22/09/2024 10:54:51 Z:
+Phala notes: Marvin Tong, Hang
+
+<https://www.notion.so/flashbots/Phala-1086b4a0d87680bbac41e2b82bb533a4>
+
+1. Overview
+    a. They want to set up a TEE cloud to make facilitate easier access for others. They want to build the Kubernetes for TEEs so developers can avoid cloud vendor lock. Phala aims to attach worker attestations with the server to allow for migration flexibility.
+    b. They are happy to contribute to open source projects but need more clarity into the coordination of SDK development and a long-term roadmap to participate in building.
+    c. They are aligned with Dstack and really liked <@U06G8D1Q87R> last blog post on the builder.
+2. Current Priorities
+    a. TEE metering
+        i. How to split resources when multiple apps are deployed in the same TEE. They use a VM for gas metering instead of a timer.
+    b. TEE benchmarking
+3. Challenges
+4. PHALA token:
+    a. Phalaʻs token could pose an issue. Hang believes that they can offer the TDX cloud as a company service so that itʻs not associated with their Phala Network. The TDX cloud can have its own brand.
+5. Contribution:
+    a. Phala could be brought on as a core contributor, similar to Nethermind. It would be like the EF and Consensys relationship for shared researchers.
+6. Communication:
+    a. Phala will link papers, repos, and blog posts to their <https://docs.google.com/document/d/1z5zwyrEPhmhThpIn03p1hdtQeYx2k7i81-zqwFwwqPo/preview#heading=h.33fp5kts2mfm|collaboration paper>. 
+Action Items:
+• <@U03GRQX5HGR> will assign to FB teams to review and split tasks.
+
