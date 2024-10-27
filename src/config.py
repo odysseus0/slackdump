@@ -1,3 +1,4 @@
+import logging
 import os
 
 from dotenv import load_dotenv
@@ -19,5 +20,5 @@ STAKEHOLDER_MAPPING_PATH = os.getenv(
 )
 
 # Logging configuration
-LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+LOG_LEVEL = getattr(logging, os.getenv("LOG_LEVEL", "INFO"))
 LOG_FILE = os.getenv("LOG_FILE", "slack_processor.log")

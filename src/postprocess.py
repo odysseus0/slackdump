@@ -54,7 +54,6 @@ def get_stakeholder_page_id(
 def post_process(
     note: StakeholderNote,
     conversation_processor: ConversationProcessor,
-    stakeholder_page_map: Dict[str, str],
 ) -> PostProcessedStakeholderNote:
     """
     Post-process a StakeholderNote by retrieving full Slack thread content and matching stakeholder ID.
@@ -62,7 +61,6 @@ def post_process(
     Args:
         note: The StakeholderNote to be post-processed.
         conversation_processor: An instance of ConversationProcessor to retrieve thread content.
-        stakeholder_page_map: A dictionary mapping stakeholder names to page IDs.
 
     Returns:
         A PostProcessedStakeholderNote with full Slack thread content as markdown and matched stakeholder ID.
@@ -84,23 +82,9 @@ def post_process(
     full_threads_markdown = "\n\n".join(full_threads)
     logger.debug(f"Combined {len(full_threads)} threads into markdown")
 
-    stakeholder_page_id = get_stakeholder_page_id(
-        stakeholder_page_map, note.stakeholder_name
-    )
-
-    if stakeholder_page_id:
-        logger.info(
-            f"Matched stakeholder '{note.stakeholder_name}' to page ID: {stakeholder_page_id}"
-        )
-    else:
-        logger.warning(
-            f"No matching page ID found for stakeholder: {note.stakeholder_name}"
-        )
-
     post_processed_note = PostProcessedStakeholderNote(
         **note.model_dump(),
         full_slack_threads=full_threads_markdown,
-        stakeholder_page_id=stakeholder_page_id,
     )
     logger.info(f"Post-processing completed for stakeholder: {note.stakeholder_name}")
     return post_processed_note

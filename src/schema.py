@@ -32,9 +32,6 @@ class PostProcessedStakeholderNote(StakeholderNote):
     full_slack_threads: str = Field(
         description="The full text of relevant Slack threads associated with this note."
     )
-    stakeholder_page_id: str | None = Field(
-        default=None, description="The ID of the stakeholder page in Notion."
-    )
 
     def get_thread_markdown(self) -> str:
         return "\n".join(self.full_slack_threads)

@@ -1,22 +1,17 @@
 import asyncio
 import logging
-from typing import Dict, List
+from typing import List
 
 from chunking import ConversationProcessor
-from config import (
-    DEFAULT_MODEL,
-    SLACK_DUMP_PATH,
-    STAKEHOLDER_MAPPING_PATH,
-)
+from config import DEFAULT_MODEL, SLACK_DUMP_PATH
 from logging_config import setup_logging
-from notion import NotionManager
-from postprocess import post_process
-from schema import PostProcessedStakeholderNote, StakeholderNote
-from stakeholder_name_id import load_stakeholder_page_map
+from md_dump import dump_to_markdown
+from postprocess import PostProcessedStakeholderNote, post_process
+from schema import StakeholderNote
 from structured_extract import OpenAIManager
 
 # Set up logging
-logger = setup_logging(level=logging.INFO)  # Change to DEBUG mode
+logger = setup_logging(level=logging.INFO)
 
 
 async def process_slack_dump(
@@ -41,18 +36,12 @@ async def process_slack_dump(
 async def post_process_notes(
     notes: List[StakeholderNote],
     conversation_processor: ConversationProcessor,
-    stakeholder_page_map: Dict[str, str],
 ) -> List[PostProcessedStakeholderNote]:
     """Post-process the extracted stakeholder notes."""
     logger.info(f"Starting post-processing of {len(notes)} stakeholder notes")
-    post_processed = [
-        post_process(note, conversation_processor, stakeholder_page_map)
-        for note in notes
-    ]
+    post_processed = [post_process(note, conversation_processor) for note in notes]
     logger.info(f"Completed post-processing. Resulting in {len(post_processed)} notes")
-    logger.debug(
-        f"First post-processed note sample: {post_processed[0]}"
-    )  # Debug sample
+    logger.debug(f"First post-processed note sample: {post_processed[0]}")
     return post_processed
 
 
@@ -63,16 +52,6 @@ async def main():
         # Initialize managers
         logger.info(f"Initializing OpenAIManager with model: {DEFAULT_MODEL}")
         openai_manager = OpenAIManager(model=DEFAULT_MODEL)
-        logger.info("Initializing NotionManager")
-        notion_manager = NotionManager()
-
-        # Load stakeholder page map
-        logger.info(f"Loading stakeholder page map from {STAKEHOLDER_MAPPING_PATH}")
-        stakeholder_page_map = await load_stakeholder_page_map(STAKEHOLDER_MAPPING_PATH)
-        logger.info(f"Loaded {len(stakeholder_page_map)} stakeholder mappings")
-        logger.debug(
-            f"Stakeholder map sample: {dict(list(stakeholder_page_map.items())[:5])}"
-        )  # Debug sample
 
         # Process Slack dump
         logger.info(f"Initializing ConversationProcessor with {SLACK_DUMP_PATH}")
@@ -84,30 +63,15 @@ async def main():
 
         # Post-process notes
         post_processed_notes = await post_process_notes(
-            extracted_notes, conversation_processor, stakeholder_page_map
+            extracted_notes, conversation_processor
         )
         logger.info(f"Post-processed {len(post_processed_notes)} notes")
 
-        # Add notes to Notion
-        logger.info("Starting to add notes to Notion")
-        async with notion_manager:
-            results = await notion_manager.batch_add_postprocessed_notes_to_notion(
-                post_processed_notes
-            )
+        # Dump to markdown
+        logger.info("Dumping post-processed notes to markdown files")
+        dump_to_markdown(post_processed_notes)
+        logger.info("Markdown dump completed")
 
-        # Log results
-        successful_uploads = 0
-        for i, result in enumerate(results):
-            if isinstance(result, Exception):
-                logger.error(f"Failed to create page {i + 1}: {result}")
-            else:
-                logger.info(f"New page {i + 1} created. {result['message']}")
-                logger.debug(f"Created page details: {result}")  # Debug details
-                successful_uploads += 1
-
-        logger.info(
-            f"Successfully uploaded {successful_uploads} out of {len(results)} notes to Notion"
-        )
         logger.info("Process completed successfully!")
 
     except Exception as e:
