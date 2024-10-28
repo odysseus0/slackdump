@@ -1,9 +1,5 @@
 # Scratch Pad
 
-- Generic data extraction
-  - Won't do structured data extraction
-  - Just output plain text and dump it as a bunch of markdown files into a Notion page
-
 ## Flow
 
 - Use slackdump to get the slack data into a plain text file. [example](data/C04HSTQAK0S.txt). Integrate this step into the Python main.py script so that the user does not needs to manually run it.

@@ -1,9 +1,13 @@
+# Cursor rules
+
 - Use Google Python Style Guide and docstring style
 - We are using type hints, so do not include type annotations in the docstrings.
 - Always use cutting edge yet already quite production ready tech stacks like uv and best practices.
 - You are an expert at python and AI, so always follow best practices and use the best tools for the job. Do not be afraid to use advanced techniques when appropriate.
+- Use modern python features and best practices. We are using python 3.12.
 
 ## Tech stacks
 
 - Use uv project to manage python projects
 - Use httpx for async HTTP requests
+- Use pipx style setup for package distribution to developers

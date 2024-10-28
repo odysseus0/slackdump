@@ -1,5 +1,6 @@
 import logging
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -9,15 +10,9 @@ load_dotenv()
 # Default configuration settings
 DEFAULT_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 MAX_CONCURRENT = int(os.getenv("MAX_CONCURRENT", "1"))
-PIPEDREAM_WEBHOOK_URL = os.getenv(
-    "PIPEDREAM_WEBHOOK_URL", "https://eoyd1oqis8y2mhq.m.pipedream.net"
-)
 
 # File paths
-SLACK_DUMP_PATH = os.getenv("SLACK_DUMP_PATH", "data/C04HSTQAK0S.txt")
-STAKEHOLDER_MAPPING_PATH = os.getenv(
-    "STAKEHOLDER_MAPPING_PATH", "data/stakeholder_crm_page_name_id_mapping.csv"
-)
+SLACK_DUMP_PATH = Path(os.getenv("SLACK_DUMP_PATH", "data/C04HSTQAK0S.txt"))
 
 # Logging configuration
 LOG_LEVEL = getattr(logging, os.getenv("LOG_LEVEL", "INFO"))

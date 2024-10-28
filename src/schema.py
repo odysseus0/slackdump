@@ -21,7 +21,7 @@ class StakeholderNote(BaseModel):
     )
 
 
-class ExtractedStakeholderNotes(BaseModel):
+class StakeholderNotes(BaseModel):
     stakeholder_notes: list[StakeholderNote] = Field(
         default_factory=list,
         description="A list of StakeholderNote objects extracted from the given context",
@@ -39,4 +39,5 @@ class PostProcessedStakeholderNote(StakeholderNote):
 
 if __name__ == "__main__":
     print(StakeholderNote.model_json_schema())
-    print(ExtractedStakeholderNotes.model_json_schema())
+    print(StakeholderNotes.model_json_schema())
+    print(PostProcessedStakeholderNote.model_json_schema())

@@ -1,4 +1,5 @@
 import re
+from pathlib import Path
 from typing import Dict, Generator, Iterator
 
 import tiktoken
@@ -40,7 +41,7 @@ class ConversationProcessor:
     THREAD_PATTERN = r"^(> .+? \@\s*\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2} Z:)"
 
     def __init__(
-        self, file_path: str, model_name: str = "gpt-4o", chunk_size: int = 28000
+        self, file_path: Path, model_name: str = "gpt-4o", chunk_size: int = 28000
     ):
         self.file_path = file_path
         self.model_name = model_name

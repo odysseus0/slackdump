@@ -1,13 +1,13 @@
 import asyncio
 import logging
-from typing import List
+from typing import Callable, List, Optional
 
 import yaml
 from httpx import AsyncClient, AsyncHTTPTransport, Timeout
 from openai import AsyncOpenAI
 
 from config import DEFAULT_MODEL, MAX_CONCURRENT
-from schema import ExtractedStakeholderNotes
+from schema import StakeholderNotes
 
 logger = logging.getLogger(__name__)
 
@@ -34,33 +34,20 @@ class OpenAIManager:
             return yaml.safe_load(file)
 
     async def extract_stakeholder_notes(
-        self, chunks: List[str]
-    ) -> List[ExtractedStakeholderNotes]:
-        """Process structured note extraction concurrently with controlled parallelism."""
-        logger.info(
-            f"Starting extraction of stakeholder notes from {len(chunks)} chunks"
-        )
+        self, chunks: List[str], progress_callback: Optional[Callable[[], None]] = None
+    ) -> List[StakeholderNotes]:
+        """Extract stakeholder notes with progress tracking."""
+        results: List[StakeholderNotes] = []
+        for chunk in chunks:
+            async with self.semaphore:
+                result = await self.process_chunk(chunk)
+                if result is not None:
+                    results.append(result)
+                if progress_callback:
+                    progress_callback()
+        return results
 
-        tasks = [self._process_with_rate_limit(chunk) for chunk in chunks]
-        results = await asyncio.gather(*tasks, return_exceptions=True)
-
-        # Filter out None results and handle exceptions
-        filtered_results = [
-            r for r in results if isinstance(r, ExtractedStakeholderNotes)
-        ]
-
-        logger.info(
-            f"Completed extraction. Successfully processed {len(filtered_results)}/{len(results)} chunks"
-        )
-        return filtered_results
-
-    async def _process_with_rate_limit(
-        self, chunk: str
-    ) -> ExtractedStakeholderNotes | None:
-        async with self.semaphore:
-            return await self.process_chunk(chunk)
-
-    async def process_chunk(self, chunk: str) -> ExtractedStakeholderNotes | None:
+    async def process_chunk(self, chunk: str) -> StakeholderNotes | None:
         """Process a single Slack context."""
         logger.info(
             f"Processing chunk of length {len(chunk)} starting with {chunk[:100]}..."
@@ -76,7 +63,7 @@ class OpenAIManager:
             logger.error(f"Error processing chunk: {e}")
             raise
 
-    async def _create_completion(self, chunk: str) -> ExtractedStakeholderNotes | None:
+    async def _create_completion(self, chunk: str) -> StakeholderNotes | None:
         """Create a single completion for a given Slack context."""
         try:
             logger.debug("Sending request to OpenAI API")
@@ -91,7 +78,7 @@ class OpenAIManager:
                         ),
                     },
                 ],
-                response_format=ExtractedStakeholderNotes,
+                response_format=StakeholderNotes,
             )
             logger.debug("Received response from OpenAI API")
             result = response.choices[0].message.parsed
