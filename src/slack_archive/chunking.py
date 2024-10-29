@@ -1,10 +1,10 @@
 import re
+from collections.abc import Generator, Iterator
 from pathlib import Path
-from typing import Dict, Generator, Iterator
 
 import tiktoken
 
-from config import (
+from slack_archive.config import (
     SLACK_DUMP_PATH,
 )
 
@@ -50,14 +50,14 @@ class ConversationProcessor:
 
         self.thread_map = self._extract_threads()
 
-    def _extract_threads(self) -> Dict[str, Thread]:
+    def _extract_threads(self) -> dict[str, Thread]:
         """
         Extract individual threads from the slack dump file.
 
         Returns:
-            Dict[str, Thread]: A dictionary mapping thread fingerprints to Thread objects.
+            A dictionary mapping thread fingerprints to Thread objects.
         """
-        with open(self.file_path, "r") as file:
+        with open(self.file_path, encoding="utf-8") as file:
             conversation_text = file.read()
 
         threads = re.split(self.THREAD_PATTERN, conversation_text, flags=re.MULTILINE)
@@ -131,17 +131,19 @@ if __name__ == "__main__":
 
     # More efficient way to get the first 3 items
     for i, fingerprint in enumerate(processor.get_fingerprints()):
-        if i >= 3:
+        if i >= 3:  # noqa: PLR2004
             break
         thread = processor.get_thread_content(fingerprint)
         print(f"Fingerprint: {fingerprint}")
-        print(f"Full text: {thread[:100]}...")  # Print first 100 characters
+        print(f"Full text: {thread[:100]}...")
         print()
 
     # Example of using the chunks
     for i, chunk in enumerate(processor.chunk_conversation()):
         print(
-            f"Chunk {i+1} (Token Count: {len(processor.encoding.encode(chunk))}):\n{chunk[:100]}...\n"
+            f"Chunk {i + 1} (Token Count: "
+            f"{len(processor.encoding.encode(chunk))}):\n"
+            f"{chunk[:100]}...\n"
         )
 
     # Example of retrieving a specific thread

@@ -2,7 +2,6 @@ import asyncio
 import platform
 from importlib import resources
 from pathlib import Path
-from typing import Optional
 
 from rich.console import Console
 
@@ -10,7 +9,7 @@ from rich.console import Console
 class SlackDumpManager:
     """Manages slackdump binary execution."""
 
-    def __init__(self, console: Optional[Console] = None):
+    def __init__(self, console: Console | None = None):
         """Initialize SlackDumpManager."""
         self.console = console or Console()
         self.binary_name = (
@@ -47,7 +46,7 @@ class SlackDumpManager:
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
-        stdout, stderr = await process.communicate()
+        _, stderr = await process.communicate()
 
         if process.returncode != 0:
             raise RuntimeError(f"Slackdump failed: {stderr.decode()}")
@@ -58,6 +57,6 @@ class SlackDumpManager:
         """Async context manager entry."""
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(self, *_):
         """Async context manager exit."""
         pass

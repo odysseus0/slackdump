@@ -1,13 +1,13 @@
 import asyncio
 import logging
-from typing import Callable, List, Optional
+from collections.abc import Callable
 
 import yaml
 from httpx import AsyncClient, AsyncHTTPTransport, Timeout
 from openai import AsyncOpenAI
 
-from config import DEFAULT_MODEL, MAX_CONCURRENT
-from schema import StakeholderNotes
+from slack_archive.config import DEFAULT_MODEL, MAX_CONCURRENT
+from slack_archive.schema import StakeholderNotes
 
 logger = logging.getLogger(__name__)
 
@@ -28,16 +28,17 @@ class OpenAIManager:
         self.semaphore = asyncio.Semaphore(max_concurrent)
         self.prompts = self.load_prompts()
 
-    def load_prompts(self) -> dict[str, str]:
+    @staticmethod
+    def load_prompts() -> dict[str, str]:
         """Load prompts from YAML file."""
-        with open("src/prompts.yaml", "r") as file:
+        with open("src/prompts.yaml", encoding="utf-8") as file:
             return yaml.safe_load(file)
 
     async def extract_stakeholder_notes(
-        self, chunks: List[str], progress_callback: Optional[Callable[[], None]] = None
-    ) -> List[StakeholderNotes]:
+        self, chunks: list[str], progress_callback: Callable[[], None] | None = None
+    ) -> list[StakeholderNotes]:
         """Extract stakeholder notes with progress tracking."""
-        results: List[StakeholderNotes] = []
+        results: list[StakeholderNotes] = []
         for chunk in chunks:
             async with self.semaphore:
                 result = await self.process_chunk(chunk)
@@ -93,13 +94,14 @@ async def main():
     openai_manager = OpenAIManager()
 
     # load last chunk to be extracted
-    with open("data/last_chunk.txt", "r") as file:
+    with open("data/last_chunk.txt", encoding="utf-8") as file:
         chunk = file.read()
 
     extracted_notes = await openai_manager.process_chunk(chunk)
     if extracted_notes is not None:
         print(
-            f"Extracted {len(extracted_notes.stakeholder_notes)} sets of stakeholder notes"
+            f"Extracted {len(extracted_notes.stakeholder_notes)} sets of stakeholder"
+            f"notes"
         )
     else:
         logger.warning("No result returned from OpenAI API")

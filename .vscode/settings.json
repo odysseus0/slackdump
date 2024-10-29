@@ -25,5 +25,10 @@
     "reportUnknownVariableType": "warning",
     "reportUnknownArgumentType": "warning",
     "reportGeneralTypeIssues": "warning"
-  }
+  },
+  "python.testing.pytestArgs": [
+    "tests"
+  ],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true
 }

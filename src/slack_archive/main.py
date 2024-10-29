@@ -2,7 +2,6 @@ import asyncio
 import logging
 import shutil
 from pathlib import Path
-from typing import List
 
 import click
 from rich.console import Console
@@ -16,20 +15,20 @@ from rich.progress import (
     TimeRemainingColumn,
 )
 
-from chunking import ConversationProcessor
-from config import DEFAULT_MODEL
-from md_dump import dump_to_markdown
-from postprocess import post_process
-from schema import PostProcessedStakeholderNote, StakeholderNote
-from slack_dump.slack_dump import SlackDumpManager
-from structured_extract import OpenAIManager
+from slack_archive.chunking import ConversationProcessor
+from slack_archive.config import DEFAULT_MODEL
+from slack_archive.md_dump import dump_to_markdown
+from slack_archive.postprocess import post_process
+from slack_archive.schema import PostProcessedStakeholderNote, StakeholderNote
+from slack_archive.slack_dump import SlackDumpManager
+from slack_archive.structured_extract import OpenAIManager
 
 # Create a single console instance
 console = Console()
 
 
 # Update logging setup to use Rich
-def setup_rich_logging(level=logging.INFO):
+def setup_rich_logging(level: int = logging.INFO) -> logging.Logger:
     """Set up Rich logging handler."""
     logging.basicConfig(
         level=level,
@@ -58,7 +57,7 @@ def create_progress_bar() -> Progress:
 # 2. Simplify process_slack_dump function
 async def process_slack_dump(
     processor: ConversationProcessor, openai_manager: OpenAIManager
-) -> List[StakeholderNote]:
+) -> list[StakeholderNote]:
     """Process the Slack dump file and extract stakeholder notes."""
     chunks = list(processor.chunk_conversation())
     logger.debug(f"Generated {len(chunks)} chunks from Slack dump")  # Changed to DEBUG
@@ -89,10 +88,10 @@ async def initialize_processors(
     return slack_manager, openai_manager, conversation_processor
 
 
-async def post_process_notes(
-    notes: List[StakeholderNote],
+def post_process_notes(
+    notes: list[StakeholderNote],
     conversation_processor: ConversationProcessor,
-) -> List[PostProcessedStakeholderNote]:
+) -> list[PostProcessedStakeholderNote]:
     """Post-process the extracted stakeholder notes."""
     logger.debug(
         f"Starting post-processing of {len(notes)} stakeholder notes"
@@ -136,7 +135,7 @@ async def run_pipeline(
         )
 
         # Post-process notes
-        post_processed_notes = await post_process_notes(
+        post_processed_notes = post_process_notes(
             extracted_notes, conversation_processor
         )
 
@@ -189,7 +188,7 @@ def main(model: str, keep_temp: bool, output: str):
         asyncio.run(run_pipeline(model, keep_temp, output_dir, temp_dump_path))
     except Exception as e:
         console.print_exception(show_locals=True)
-        raise click.ClickException(str(e))
+        raise click.ClickException(str(e)) from e
 
 
 def cleanup_temp_files(path: Path) -> None:

@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from config import LOG_FILE, LOG_LEVEL
+from slack_archive.config import LOG_FILE, LOG_LEVEL
 
 
 def setup_logging(level: int = LOG_LEVEL) -> logging.Logger:
